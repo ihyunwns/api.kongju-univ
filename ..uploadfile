@@ -1,0 +1,49 @@
+const express = require('express');
+const app = express();
+app.use(cors());
+
+const server = app.listen(3001, () => {
+    console.log('Start Server : localhost:3001')
+});
+
+app.get('/api/users/:type', async(req, res) => {
+    let {type} = req.params;
+    if(type == 'seoul'){
+        let data = [
+            {name:"홍길동", city:"seoul"},
+            {name:"임현준", city:"seoul"},
+        ];
+        res.send(data);
+    }
+    else if(type == 'jeju'){
+        let data = [
+            {name:"김시영", city:"jeju"},
+            {name:"황철식", city:"jeju"},
+        ];
+        res.send(data);
+    }
+    else{
+        res.send('Type is not Exist.')
+    }
+});
+
+app.get('/api/sales/:year', async(req, res) => {
+    let {year} = req.params;
+    if(year == '2019'){
+        let data = [
+            {product:"반도체", amount:2231231231},
+            {product:"냉장고", amount:2314151},
+        ];
+        res.send(data);
+    }
+    else if(year == '2020'){
+        let data = [
+            {product:"반도체", amount:1231},
+            {product:"냉장고", amount:23142321151},
+        ];
+        res.send(data);
+    }
+    else{
+        res.send('Type is not Exist.')
+    }
+});
