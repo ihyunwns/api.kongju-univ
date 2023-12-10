@@ -1,0 +1,5 @@
+{
+    "character" : "s3://kongju-univ-img-storage/image/character/",
+    "nature" : "s3://kongju-univ-img-storage/image/nature/",
+    "object" : "s3://kongju-univ-img-storage/image/object/"
+}
