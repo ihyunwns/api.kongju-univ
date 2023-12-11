@@ -2,46 +2,42 @@ const express = require('express');
 const router = express.Router();
 
 const multer = require('multer');
-const multerS3 = require('multer-s3');
 const aws = require('aws-sdk');
 
-const bodyParser = require('body-parser')
+const dateTranster = require('../utils/dateTransfer');
+const config = require('../config/aws.json');
+const s3 = new aws.S3({
+    accessKeyId: config.accessKeyId,
+    secretAccessKey: config.secretAccessKey,
+    region: config.region
+});
 
-router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({ extended: true }));
-router.use(express.json());
-
+// form-data를 메모리에 일시적으로 저장하기 위함
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const upload_data = multer({ storage: storage });
 
-router.use(upload.any());
+router.post('/', upload_data.single('file'), (req, res) => {
 
-router.post('/',(req, res) => {
+  const uploadedFile = req.file;
+  const s3ObjectKey = dateTranster(req.body.category, req.body.title);
+  
+  s3.upload(
+    {
+      Bucket: config.bucket,
+      Key: s3ObjectKey,
+      Body: uploadedFile.buffer, // 파일 데이터
+      ACL: 'public-read', // 파일을 public으로 설정할 경우
+    },
+    (err, data) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send('Error uploading to S3');
+      }
 
-  aws.config.loadFromPath(__dirname + '/../config/aws.json');
-
-  const s3 = new aws.S3();
-  console.log('FIles: ' + req.files);
-  // console.log('text data: ' + req.body);
-
-  res.send(JSON.stringify(req.body));
-
-
-  // const upload = multer({
-  //   storage: multerS3({
-  //     s3: s3,
-  //     bucket: 'kongju-univ-img-storage',
-  //     acl: 'public-read',
-  //     contentType: multerS3.AUTO_CONTENT_TYPE,
-      
-  //     // 업로드하는 파일이 어떤 이름으로 버킷에 저장되는 지 설정
-  //     key: function (req, file, callback) {
-  //       const uploadDirectory = req.query.directory ?? ''
-  //       callback(null, `${Date.now()}_${file.originalname}`); // 이름 중복 방지를 위한 Date().now 추가
-  //     },
-  //   }),
-  // });
-
+      console.log('File uploaded to S3:', data.Location); //db에 저장
+      res.status(200).send('File uploaded to S3');
+    }
+  );
 
 });
 
