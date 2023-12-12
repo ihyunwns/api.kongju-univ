@@ -1,4 +1,4 @@
-function dateTranster(category, title){
+function dateTranster(category, title, type){
 
     let folderPath = '';
     if (category === 'character') {
@@ -17,7 +17,7 @@ function dateTranster(category, title){
     formattedString = formattedString.replace(', ', '-');
     formattedString = formattedString.replace(' ', '-');
   
-    return `${folderPath}${formattedString}_${title}`;
+    return `${folderPath}${formattedString}_${title}.${type}`;
 }
 
 module.exports = dateTranster;

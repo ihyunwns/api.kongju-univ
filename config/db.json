@@ -1,0 +1,8 @@
+{
+    "db_host" : "localhost",
+    "db_name" : "test",
+    "db_username" : "root",
+    "db_password" : "rhdwneogkrry",
+    "db_table" : "test_table",
+    "port" : 3306
+}
